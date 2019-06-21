@@ -1,0 +1,120 @@
+version: '3.3'
+services:
+  consul-leader:
+    image: consul
+    command: agent -server -client=0.0.0.0 -bootstrap -ui
+    volumes:
+      - consul-data-leader:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
+    networks:
+      - default
+      - traefik-public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:consul.${DOMAIN?Variable DOMAIN not set}
+        - traefik.enable=true
+        - traefik.port=8500
+        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+        - traefik.frontend.auth.basic.users=${USERNAME?Variable USERNAME not set}:${HASHED_PASSWORD?Variable HASHED_PASSWORD not set}
+  consul-replica:
+    image: consul
+    command: agent -server -client=0.0.0.0 -retry-join="consul-leader"
+    volumes:
+      - consul-data-replica:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
+    networks:
+      - default
+      - traefik-public
+    deploy:
+      replicas: ${CONSUL_REPLICAS:-3}
+      placement:
+        preferences:
+          - spread: node.id
+  traefik:
+    #image: traefik:v1.7
+    image: traefik:v1.7.12-alpine
+    ports:
+      - 80:80
+      - 443:443
+    deploy:
+      replicas: ${TRAEFIK_REPLICAS:-3}
+      placement:
+        constraints:
+          - node.role == manager
+        preferences:
+          - spread: node.id
+      labels:
+        - traefik.frontend.rule=Host:traefik.${DOMAIN?Variable DOMAIN not set}
+        - traefik.enable=true
+        - traefik.port=8080
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+        - traefik.frontend.auth.basic.users=${USERNAME?Variable USERNAME not set}:${HASHED_PASSWORD?Variable HASHED_PASSWORD not set}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID?Variable AWS_ACCESS_KEY_ID not set}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY?Variable AWS_SECRET_ACCESS not set}
+      - AWS_REGION=${AWS_REGION?Variable AWS_REGION not set}
+      - AWS_HOSTED_ZONE_ID=${AWS_HOSTED_ZONE_ID?Variable AWS_HOSTED_ZONE_ID not set}
+    command: >
+      --logLevel=DEBUG
+      --insecureSkipVerify=true
+      --accessLog
+      --api
+      --docker
+      --docker.swarmmode
+      --docker.watch
+      --docker.exposedbydefault=false
+      --constraints=tag==traefik-public
+      --entrypoints='Name:http Address::80'
+      --entrypoints='Name:https Address::443 TLS'
+      --consul
+      --consul.endpoint='consul-leader:8500'
+      --consulcatalog
+      --consulcatalog.endpoint='consul-leader:8500'
+      --acme
+      --acme.email=${EMAIL}
+      --acme.storage='traefik/acme/account'
+      --acme.entryPoint=https
+      --acme.dnsChallenge
+      --acme.dnsChallenge.provider='route53'
+      --acme.dnsChallenge.delayBeforeCheck=0
+      --acme.domains=${ACME_SUBDOMAINS}
+      --acme.domains=${ACME_DOMAINS}
+      --acme.acmelogging=true
+      --acme.onhostrule=true
+    networks:
+      - default
+      - traefik-public
+    depends_on:
+      - consul-leader
+        
+volumes:
+  consul-data-leader:
+    #driver: local
+    #driver_opts:
+    #  type: nfs
+    #  o: nfsvers=4,addr=${NFS_SERVER?error},rw
+      #o: addr=${NFS_SERVER?error}
+    #  device: ":/volume1/docker/data/consul/leader"
+  consul-data-replica:
+
+networks:
+  traefik-public:
+    external: true
