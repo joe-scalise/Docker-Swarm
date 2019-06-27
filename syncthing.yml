@@ -1,0 +1,43 @@
+version: "3.3"
+
+services:
+  app:
+    image: linuxserver/syncthing
+    environment:
+      - PUID=${PUID?Variable not set}
+      - PGID=${PGID?Variable not set}
+      - TZ=America/New_York
+      - UMASK_SET=022
+    ports:
+      - 8384:8384
+      - 22000:22000
+      - 21027:21027/udp
+    volumes:
+      - syncthing-data:/config
+      - /home/joe/data:/host-directory
+    networks:
+      - traefik-public
+    deploy:
+      placement:
+        constraints:
+          - node.labels.syncthing.syncthing-data == true
+      labels:
+        - traefik.frontend.rule=Host:syncthing.${DOMAIN?Variable not set}
+        - traefik.enable=true
+        - traefik.port=8384
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - treafik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+
+networks:
+  traefik-public:
+    external: true
+
+volumes:
+  syncthing-data:
+    driver: local
+  
