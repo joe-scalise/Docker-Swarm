@@ -2,7 +2,7 @@
 
 This repository is a backup of my Docker Swarm Mode system for self hosting purposes. All the ideas presented in the files here are an amalgamation of several online resources in my quest to learn Docker, and related tooling, over many months time.
 
-The setup had many itterations because problems, but generally what finally worked was to focus on minimizing the amount I relied on configuration file based setups.  Ideally, the goal will be to have a system that can be deployed with minimal host setup.  That means a YAML file to define the stack but stay away from environment files, config files and bind-mounted data directories.  None of this was possible until I learned about Consul, Docker Volumes and Docker Secrets.
+The setup had many itterations because problems, but generally what finally worked was to focus on minimizing the amount I relied on configuration file based setups.  Ideally, the goal will be to have a system that can be deployed with minimal host setup.  That means a YAML file to define the stack but staying away from environment files, config files and bind-mounted data directories.  None of this was possible until I learned about Consul, Docker Volumes and Docker Secrets.
 
 Highlights of the system setup:
 
@@ -22,7 +22,7 @@ Other apps that I run, really like and rely upon daily:
 - Plex
 - Home Assistant (not in Swarm because of USB devices)
 
-Links to what I used as inspiration:
+Links to what I used as inspiration (copied):
 
 - Home Assistant forum post here
 - Ultimate Home Media Server
