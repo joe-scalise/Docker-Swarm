@@ -1,0 +1,35 @@
+version: "3.3"
+
+services:
+  app:
+    image: mprasil/bitwarden
+    environment:
+      - TZ=`ls -la /etc/localtime | cut -d/ -f8-9`
+    volumes:
+      - bitwarden-data:/data/:rw
+    networks:
+      - traefik-public
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.frontend.rule=Host:bitwarden.${DOMAIN}
+        - traefik.port=80
+        #- traefik.web.frontend.rule=Host:bitwarden.${DOMAIN}
+        #- traefik.web.port=80
+        - traefik.hub.frontend.rule=Host:bitwarden.${DOMAIN};Path:/notifications/hub
+        - traefik.hub.port=3012
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+
+volumes:
+  bitwarden-data:
+    driver: local
+
+networks:
+  traefik-public:
+    external: true
