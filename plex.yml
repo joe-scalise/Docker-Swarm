@@ -1,0 +1,45 @@
+version: "3.3"
+
+services:
+  plex:
+    image: plexinc/pms-docker:plexpass
+    environment:
+      - TZ=${TZ}
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - ADVERTISE_IP=${PLEX_ADVERTISE_ID}
+    volumes:
+      - plex-config:/config
+      - /nfs/media/:/data
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:plex.${DOMAIN_ROOT}
+        - traefik.enable=true
+        - traefik.port=32400
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+    networks:
+      - traefik-public
+    ports:
+      - 32469:32469
+      - 32400:32400
+      - 32401:32401
+      - 3005:3005
+      - 8324:8324
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
+
+volumes:
+  plex-config:
+    driver: local
+
+networks:
+  traefik-public:
+    external: true
