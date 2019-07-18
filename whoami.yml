@@ -1,0 +1,25 @@
+version: "3.3"
+services:
+  whoami:
+    image: containous/whoami
+    networks:
+      - traefik-public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:whoami.${DOMAIN}
+        - traefik.enable=true
+        - traefik.port=80
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - treafik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+        # Traefik Forward Auth
+        #- traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+        #- traefik.frontend.auth.forward.authResponseHeaders=X-Forwarded-User
+        #- traefik.frontend.auth.forward.trustForwardHeader=true
+networks: 
+  traefik-public:
+    external: true
