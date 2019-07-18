@@ -1,0 +1,77 @@
+version: "3.3"
+services: 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    networks: 
+      - elk-network
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.1.1
+    depends_on: 
+      - elasticsearch
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro 
+    networks:
+      - elk-network
+    deploy:
+      replicas: 1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.1.1
+    depends_on:
+      - logstash
+    ports: 
+      - 5601:5601
+    networks: 
+      - elk-network
+      - traefik-public
+    environment:
+      ELASTICSEARCH_URL: 'http://elasticsearch:9200'
+      XPACK_SECURITY_ENABLED: 'false'
+      XPACK_MONITORING_ENABLED: 'false'
+    deploy:
+      replicas: 1
+      labels:
+        - traefik.frontend.rule=Host:kibana.${DOMAIN}
+        - traefik.enable=true
+        - traefik.port=5601
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+
+  logspout:
+    image: bekt/logspout-logstash
+    environment:
+      ROUTE_URIS: 'logstash://logstash:5000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - logstash
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+
+networks: 
+  elk-network:
+  traefik-public:
+    external: true
+volumes:
+  elasticsearch-data:
+    driver: local
