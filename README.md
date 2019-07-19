@@ -2,29 +2,38 @@
 
 This repository is a backup of my Docker Swarm Mode system for self hosting purposes. All the ideas presented in the files here are an amalgamation of several online resources in my quest to learn Docker, and related tooling, over many months time.
 
-The setup had many itterations because problems, but generally what finally worked was to focus on minimizing the amount I relied on configuration file based setups.  Ideally, the goal will be to have a system that can be deployed with minimal host setup.  That means a YAML file to define the stack but staying away from environment files, config files and bind-mounted data directories.  None of this was possible until I learned about Consul, Docker Volumes and Docker Secrets.
+My setup had many itterations, but generally what finally worked was to focus on minimizing the amount I relied on configuration file based setups.  Ideally, the goal will be to have a system that can be deployed with minimal host setup.  That means a YAML file to define the stack but staying away from environment files, config files and bind-mounted data directories.  None of this was possible until I learned about Consul, Docker Volumes and Docker Secrets.
 
-Highlights of the system setup:
+Core Stacks and System Highlights:
 
-- Traefik w/ Let's Encrypt, Consul and Keycloak (no config files)
-- Portainer, Swarmpit, Weave Scope, Ranger for management
-- Syncthing to edit files on my laptop, and serve as first line of defence backups
+- **Traefik** w/ Let's Encrypt, **Consul** and **Keycloak** (no config files)
+- **Portainer** and **Swarmpit** for management (looking at Weave Scope, Ranger too)
+- **Syncthing** to edit files on my laptop, and serve as first line of defence backups
+- **Elasticsearch**, **Logstash** and **Kibana** (ELK) stack for log management
+- **Whoami** for testing
 - Docker swarm mode
 - Docker Volumes instead of bind-mounts
 - Docker Volumes backed up to NFS file share
 - Docker Secrets instead of environment files or variables
+- NFS backup scripts via crontab
 
-Other apps that I run, really like and rely upon daily:
+Apps that I rely upon daily:
 
 - Bookstack
 - Bitwarden
-- OpenFaaS
-- Plex
 - Home Assistant (not in Swarm because of USB devices)
 
-Links to what I used as inspiration (copied):
+Besides the above daily-use apps, I'm constantly creating new stacks, and am considering sharing this as a private repo (maybe Patreon?), consider it a currated (hording) collection of self-hosted software.
 
-- Home Assistant forum post here
-- Ultimate Home Media Server
-- Funky Penguin's Geek Cookbook
-- Docker Swarm Rocks
+- OpenFaaS 
+- Plex w/tools 
+- Emby
+- Snibox
+- 
+
+Links to what I used as inspiration (lots of copying):
+
+- Home Assistant [forum post](https://community.home-assistant.io/t/my-docker-stack/43548)
+- Ultimate Home Media Server [blog post](https://www.smarthomebeginner.com/docker-home-media-server-2018-basic/)
+- [Funky Penguin's Geek Cookbook](https://geek-cookbook.funkypenguin.co.nz/)
+- [Docker Swarm Rocks](https://dockerswarm.rocks/)
