@@ -7,7 +7,7 @@ check_exit_status() {
 	else
 		echo
 		echo "[ERROR] Process Failed! Exiting."
-        exit 1
+		exit 1
 
 	fi
 }
@@ -21,13 +21,13 @@ hello() {
 
 update() {
 
-    sudo apt-get update;
+	sudo apt-get update;
 	check_exit_status
 
-    sudo apt-get upgrade -y;
+	sudo apt-get upgrade -y;
 	check_exit_status
 
-    sudo apt-get dist-upgrade -y;
+	sudo apt-get dist-upgrade -y;
 	check_exit_status
 
 	sudo apt-get autoremove -y;
