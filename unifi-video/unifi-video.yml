@@ -1,0 +1,55 @@
+version: "3.3"
+services:
+  unifi-video:
+    image: pducharme/unifi-video-controller
+    environment:
+      - TZ=America/New_York
+      - PUID=${PUID?Variable not set}
+      - PGID=${PGID?Variable not set}
+    cap_add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
+    networks:
+      - net
+      - traefik-public
+    volumes:
+      - data:/var/lib/unifi-video
+      - data-videos:/var/lib/unifi-video/videos
+    ports:
+      - "1935:1935"
+      - "6666:6666"
+      - "7004:7004"
+      - "7080:7080"
+      - "7442:7442"
+      - "7443:7443"
+      - "7444:7444"
+      - "7445:7445"
+      - "7446:7446"
+      - "7447:7447"
+    #deploy:
+    #   placement:
+    #     constraints:
+    #       - node.role == manager
+      # labels:
+      #   - traefik.frontend.rule=Host:uv.${DOMAIN?Variable not set}
+      #   - traefik.enable=true
+      #   - traefik.port=7080
+      #   - traefik.tags=traefik-public
+      #   - traefik.docker.network=traefik-public
+      #   # Traefik service that listens to HTTP
+      #   - traefik.redirectorservice.frontend.entryPoints=http
+      #   - traefik.redirectorservice.frontend.redirect.entryPoint=https
+      #   # Traefik service that listens to HTTPS
+      #   - traefik.webservice.frontend.entryPoints=https
+# Uncomment security option below to set apparmor unconfined if "tmpfs is write-protected, mounting read-only" error is seen.
+# Known to happen on ubuntu, synology, and other platforms.
+    security_opt:
+      - apparmor:unconfined
+networks:
+  net:
+  traefik-public:
+volumes:
+  data:
+    driver: local
+  data-videos:
+    driver: local
