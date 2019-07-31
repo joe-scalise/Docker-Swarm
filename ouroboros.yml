@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+
+  ouroboros:
+    image: pyouroboros/ouroboros
+    environment:
+      - CLEANUP=true
+      - INTERVAL=300
+      - LOG_LEVEL=debug
+      - SELF_UPDATE=true
+      - IGNORE="traefik bitwarden freepbx"
+      - NOTIFIERS=tgram://${TELEGRAM_BOTTOKEN}/${TELEGRAM_CHATID}
+      - TZ=America/New_York
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
