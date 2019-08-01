@@ -37,3 +37,12 @@ Links to what I used as inspiration (lots of copying):
 - Ultimate Home Media Server [blog post](https://www.smarthomebeginner.com/docker-home-media-server-2018-basic/)
 - [Funky Penguin's Geek Cookbook](https://geek-cookbook.funkypenguin.co.nz/)
 - [Docker Swarm Rocks](https://dockerswarm.rocks/)
+
+## Helpful Notes
+*More than once I've lost the swarm after updates, where swarm manager available but down; this blows away your swarm config so you can start over.*
+```
+systemctl stop docker
+rm -Rf /var/lib/docker/swarm
+systemctl start docker
+docker swarm init
+```
