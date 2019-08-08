@@ -18,7 +18,7 @@ Core Stacks and System Highlights:
 - Docker Secrets instead of environment files or variables
 - NFS backup scripts via crontab
 
-Apps that I rely upon daily:
+Personal stuff I run for daily use:
 
 - Bookstack
 - Bitwarden
@@ -50,8 +50,8 @@ docker swarm init
 
 ## Docker Cheatsheet
 
-Start all stacks in current directory:
-`docker stack deploy -c $(find *.yml -printf "%f\n)"`
+Start all stacks in current directory (I gave up before I figured this one out):
+ `docker stack deploy -c $(for i in *.yml; do echo ${i%} ${i%.*}; done)`
 
 Remove all stacks:
 `docker stack rm $(docker stack ls --format '{{.Name}}')`
