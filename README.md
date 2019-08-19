@@ -47,6 +47,15 @@ rm -Rf /var/lib/docker/swarm
 systemctl start docker
 docker swarm init
 ```
+Mounting for backups and media volumes:
+```sudo mount nfs_ip:/volume1/media /nfs/media
+sudo mount nfs_ip:/volume1/docker /nfs/home
+```
+Add an entry to the /etc/fstab file to persist after reboots:
+```
+nfs_ip:/volume1/media /nfs/media nfs rsize=8192,wsize=8192,timeo=14,intr
+nfs_ip:/volume1/docker /nfs/home nfs rsize=8192,wsize=8192,timeo=14,intr
+```
 
 ## Docker Cheatsheet
 
