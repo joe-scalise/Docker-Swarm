@@ -8,7 +8,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - net
+      - private
       - traefik-public
     deploy:
       resources:
@@ -38,7 +38,7 @@ services:
     volumes:
       - db-data:/opt/couchdb/data
     networks:
-      - net
+      - private
     deploy:
       resources:
         limits:
@@ -58,7 +58,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - net
+      - private
     deploy:
       mode: global
       resources:
@@ -70,9 +70,7 @@ services:
           memory: 32M
 
 networks:
-  net:
-    driver: overlay
-    attachable: true
+  private:
   traefik-public:
     external: true
 

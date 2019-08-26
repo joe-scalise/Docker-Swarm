@@ -1,6 +1,6 @@
-version: '3.3'
-
+version: '3.7'
 services:
+
   agent:
     image: portainer/agent
     environment:
@@ -9,7 +9,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     networks:
-      - agent-network
+      - private
     deploy:
       mode: global
       placement:
@@ -22,7 +22,7 @@ services:
     volumes:
       - portainer-data:/data
     networks:
-      - agent-network
+      - private
       - traefik-public
     deploy:
       placement:
@@ -42,8 +42,7 @@ services:
         - traefik.webservice.frontend.entryPoints=https
 
 networks:
-  agent-network:
-    attachable: true
+  private:
   traefik-public:
     external: true
 

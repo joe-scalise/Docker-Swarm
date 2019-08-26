@@ -1,7 +1,6 @@
 version: '3.3'
 services:
-
-  ouroboros:
+  app:
     image: pyouroboros/ouroboros
     environment:
       - CLEANUP=true
@@ -9,11 +8,17 @@ services:
       - LOG_LEVEL=debug
       - SELF_UPDATE=true
       - IGNORE="traefik bitwarden freepbx"
-      - NOTIFIERS=tgram://${TELEGRAM_BOTTOKEN}/${TELEGRAM_CHATID}
+      #- NOTIFIERS=tgram://${TELEGRAM_BOTTOKEN}/${TELEGRAM_CHATID}
+      - NOTIFIERS= mailgun://${EMAIL}/${MAILGUN_API}/${EMAIL}
       - TZ=America/New_York
+    networks:
+      - traefik-public
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     deploy:
       placement:
         constraints:
           - node.role == manager
+networks:
+  traefik-public:
+    external: true
