@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  docker-prune:
+    image: docker
+    command: sh -c "while true; do docker image prune -af; docker rm $$(docker ps -qa --no-trunc --filter 'status=exited'); sleep 86400; done"
+    networks:
+      - bridge
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+
+networks:
+  bridge:
+    external: true
+    name: bridge
