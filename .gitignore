@@ -1,3 +1,5 @@
 .DS_Store
 .stignore
 /.stfolder
+/experimental_stacks
+/private_stacks
