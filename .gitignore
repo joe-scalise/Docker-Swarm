@@ -2,6 +2,7 @@
 .stignore
 *.env
 security.htpasswd
+environment.sh
 /.stfolder
 /experimental_stacks
 /private_stacks
