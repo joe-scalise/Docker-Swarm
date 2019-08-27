@@ -1,5 +1,6 @@
-version: "3.3"
+version: "3.7"
 services: 
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
     environment:
@@ -7,7 +8,7 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
     networks: 
-      - elk-network
+      - private
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     deploy:
@@ -23,7 +24,7 @@ services:
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro 
     networks:
-      - elk-network
+      - private
     deploy:
       replicas: 1
 
@@ -31,15 +32,13 @@ services:
     image: docker.elastic.co/kibana/kibana:7.1.1
     depends_on:
       - logstash
-    ports: 
-      - 5601:5601
     networks: 
-      - elk-network
+      - private
       - traefik-public
     environment:
-      ELASTICSEARCH_URL: 'http://elasticsearch:9200'
-      XPACK_SECURITY_ENABLED: 'false'
-      XPACK_MONITORING_ENABLED: 'false'
+      - ELASTICSEARCH_URL: 'http://elasticsearch:9200'
+      - XPACK_SECURITY_ENABLED: 'false'
+      - XPACK_MONITORING_ENABLED: 'false'
     deploy:
       replicas: 1
       labels:
@@ -57,9 +56,11 @@ services:
   logspout:
     image: bekt/logspout-logstash
     environment:
-      ROUTE_URIS: 'logstash://logstash:5000'
+      - ROUTE_URIS: 'logstash://logstash:5000'
+    networks:
+      - private
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - logstash
     deploy:
@@ -69,7 +70,7 @@ services:
         delay: 30s
 
 networks: 
-  elk-network:
+  private:
   traefik-public:
     external: true
 volumes:
