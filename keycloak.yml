@@ -1,0 +1,95 @@
+version: '3'
+
+services:
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      - DB_VENDOR=${KEYCLOAK_DB_VENDOR}
+      - DB_DATABASE=${KEYCLOAK_DB_DATABASE}
+      - DB_ADDR=${KEYCLOAK_DB_ADDR}
+      - DB_USER=${KEYCLOAK_DB_USER}
+      - DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+      - KEYCLOAK_USER=${KEYCLOAK_USER}
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
+      # This is required to run keycloak behind traefik
+      - PROXY_ADDRESS_FORWARDING=true
+      # What's our hostname?
+      - KEYCLOAK_HOSTNAME=keycloak.${DOMAIN}
+      # Tell Postgress what user/password to create
+      - POSTGRES_USER=${KEYCLOAK_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${KEYCLOAK_POSTGRES_PASSWORD}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro    
+    networks:
+      - traefik-public
+      - internal
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:keycloak.${DOMAIN}
+        - traefik.enable=true
+        - traefik.port=8080
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Tell Traefik to skip splash page
+        - traefik.frontend.redirect.regex=^https://<domain>/auth/$$
+        - traefik.frontend.redirect.replacement=https://<domain>/auth/admin/
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+
+  keycloak-db:
+    environment:
+      - DB_VENDOR=${KEYCLOAK_DB_VENDOR}
+      - DB_DATABASE=${KEYCLOAK_DB_DATABASE}
+      - DB_ADDR=${KEYCLOAK_DB_ADDR}
+      - DB_USER=${KEYCLOAK_DB_USER}
+      - DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+      - KEYCLOAK_USER=${KEYCLOAK_USER}
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
+      # This is required to run keycloak behind traefik
+      - PROXY_ADDRESS_FORWARDING=true
+      # What's our hostname?
+      - KEYCLOAK_HOSTNAME=keycloak.${DOMAIN}
+      # Tell Postgress what user/password to create
+      - POSTGRES_USER=${KEYCLOAK_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${KEYCLOAK_POSTGRES_PASSWORD}
+    image: postgres:10.1
+    volumes:
+      - database:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro    
+    networks:
+      - internal
+
+  keycloak-db-backup:
+    image: postgres:10.1
+    env_file: keycloak-backup.env
+    volumes:
+      - database-dump:/dump
+      - /etc/localtime:/etc/localtime:ro
+    entrypoint: |
+      bash -c 'bash -s <<EOF
+      trap "break;exit" SIGHUP SIGINT SIGTERM
+      sleep 2m
+      while /bin/true; do
+        pg_dump -Fc > /dump/dump_\`date +%d-%m-%Y"_"%H_%M_%S\`.psql
+        (ls -t /dump/dump*.psql|head -n $$BACKUP_NUM_KEEP;ls /dump/dump*.psql)|sort|uniq -u|xargs rm -- {}
+        sleep $$BACKUP_FREQUENCY
+      done
+      EOF'
+    networks:
+      - internal
+
+networks:
+  traefik-public:
+    external: true
+  internal:
+    driver: overlay
+
+volumes:
+  database-dump:
+    driver: local
+  database:
+    driver: local
+  

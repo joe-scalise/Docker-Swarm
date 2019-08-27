@@ -44,8 +44,12 @@ services:
     #image: traefik:v1.7
     image: traefik:v1.7.12-alpine
     ports:
-      - 80:80
-      - 443:443
+      - target: 80
+        published: 80
+        mode: host
+      - target: 443
+        published: 443
+        mode: host
     deploy:
       replicas: ${TRAEFIK_REPLICAS:-3}
       placement:
@@ -73,9 +77,9 @@ services:
       - AWS_REGION=${AWS_REGION?Variable AWS_REGION not set}
       - AWS_HOSTED_ZONE_ID=${AWS_HOSTED_ZONE_ID?Variable AWS_HOSTED_ZONE_ID not set}
     command: >
-      --logLevel=DEBUG
-      --insecureSkipVerify=true
-      --accessLog
+      --loglevel=DEBUG
+      --insecureskipverify=true
+      --accesslog
       --api
       --docker
       --docker.swarmmode
@@ -86,8 +90,6 @@ services:
       --entrypoints='Name:https Address::443 TLS'
       --consul
       --consul.endpoint='consul-leader:8500'
-      --consulcatalog
-      --consulcatalog.endpoint='consul-leader:8500'
       --acme
       --acme.email=${EMAIL}
       --acme.storage='traefik/acme/account'
@@ -104,6 +106,18 @@ services:
       - traefik-public
     depends_on:
       - consul-leader
+
+  # traefik-forward-auth:
+  #   image: thomseddon/traefik-forward-auth
+  #   env_file: traefik-forward-auth.env
+  #   networks:
+  #     - traefik-public
+  #   deploy:
+  #     labels:
+  #       - traefik.port=4181
+  #       - traefik.frontend.rule=Host:auth.${DOMAIN}
+  #       - traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+  #       - traefik.frontend.auth.forward.trustForwardHeader=true
         
 volumes:
   consul-data-leader:
