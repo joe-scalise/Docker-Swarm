@@ -1,5 +1,6 @@
 .DS_Store
 .stignore
+*.env
 /.stfolder
 /experimental_stacks
 /private_stacks
