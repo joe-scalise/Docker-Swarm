@@ -4,11 +4,18 @@ check_exit_status() {
 
 	if [ $? -eq 0 ]
 	then
+		echo "Success"
 	else
 		echo
 		echo "[ERROR] Process Failed! Exiting."
-		exit 1
+		echo
 
+		read -p "The last update command failed.  Exit script? (yes/no) " answer
+
+		if [ "$answer" == "yes" ]
+		then
+			exit 1
+		fi
 	fi
 }
 

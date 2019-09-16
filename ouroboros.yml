@@ -9,7 +9,7 @@ services:
       - SELF_UPDATE=true
       - IGNORE="traefik bitwarden freepbx"
       #- NOTIFIERS=tgram://${TELEGRAM_BOTTOKEN}/${TELEGRAM_CHATID}
-      - NOTIFIERS= mailgun://${EMAIL}/${MAILGUN_API}/${EMAIL}
+      - NOTIFIERS=mailgun://${EMAIL}/${MAILGUN_API}/${EMAIL}
       - TZ=America/New_York
     networks:
       - traefik-public

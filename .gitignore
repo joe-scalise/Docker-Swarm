@@ -6,3 +6,4 @@ environment.sh
 /.stfolder
 /experimental_stacks
 /private_stacks
+test-mailgun.sh
