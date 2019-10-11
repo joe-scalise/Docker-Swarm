@@ -11,6 +11,7 @@ for volume in $volumes
 do
   #echo "Volume: $volume"
 
+  # these are personal exemptions for me, you should remove or use as example
   if [ $volume != 'pydiocells_nfs' ]; then
 
     if [ $volume != 'elk-elasticsearch-data' ]; then
