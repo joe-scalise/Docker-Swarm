@@ -11,7 +11,13 @@ for volume in $volumes
 do
   #echo "Volume: $volume"
 
-  docker run --rm -v ${volume}:/tmp/${volume} -v /nfs/home:/backup ubuntu tar -C "/tmp/" -P -czf "/backup/${volume}.tar.gz" "${volume}"
-  
+  if [ $volume != 'pydiocells_nfs' ]; then
+
+    if [ $volume != 'elk-elasticsearch-data' ]; then
+
+      #echo $volume
+      docker run --rm -v ${volume}:/tmp/${volume} -v /nfs/home:/backup ubuntu tar -C "/tmp/" -P -czf "/backup/${volume}.tar.gz" "${volume}"
+    fi
+  fi
   done
   #echo "-- exiting script ---"
