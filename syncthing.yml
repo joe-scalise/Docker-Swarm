@@ -13,14 +13,15 @@ services:
       - 22000:22000
       - 21027:21027/udp
     volumes:
-      - syncthing-data:/config
+      - data:/config
+      - sync:/sync
       - /home/joe/data:/host-directory
     networks:
       - traefik-public
     deploy:
       placement:
         constraints:
-          - node.labels.syncthing.syncthing-data == true
+          - node.labels.syncthing.data == true
       labels:
         - traefik.frontend.rule=Host:syncthing.${DOMAIN?Variable not set}
         - traefik.enable=true
@@ -38,6 +39,8 @@ networks:
     external: true
 
 volumes:
-  syncthing-data:
+  data:
+    driver: local
+  sync:
     driver: local
   
