@@ -7,3 +7,5 @@ environment.sh
 /experimental_stacks
 /private_stacks
 test-mailgun.sh
+/configs
+.vscode/launch.json
