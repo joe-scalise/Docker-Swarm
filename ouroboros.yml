@@ -5,20 +5,15 @@ services:
     environment:
       - CLEANUP=true
       - INTERVAL=300
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
       - SELF_UPDATE=true
-      - IGNORE="traefik bitwarden freepbx"
+      - IGNORE="traefik-consul_traefik traefik-consul_consul"
       #- NOTIFIERS=tgram://${TELEGRAM_BOTTOKEN}/${TELEGRAM_CHATID}
-      - NOTIFIERS=mailgun://${EMAIL}/${MAILGUN_API}/${EMAIL}
+      - NOTIFIERS=mailgun://joe@${MAILGUN_DOMAIN}/${MAILGUN_API}/${EMAIL}
       - TZ=America/New_York
-    networks:
-      - traefik-public
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     deploy:
       placement:
         constraints:
           - node.role == manager
-networks:
-  traefik-public:
-    external: true
