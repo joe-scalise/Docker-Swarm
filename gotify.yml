@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+
+  app:
+    image: gotify/server
+    volumes:
+      - data:/app/data
+    networks:
+      - traefik-public
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.frontend.rule=Host:gotify.${DOMAIN}
+        - traefik.enable=true
+        - traefik.port=80
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+        # Basic Auth
+        #- traefik.frontend.auth.basic.users=${USERNAME?Variable USERNAME not set}:${HASHED_PASSWORD?Variable HASHED_PASSWORD not set}
+
+networks:
+  traefik-public:
+    external: true
+
+volumes:
+  data:
+    driver: local
