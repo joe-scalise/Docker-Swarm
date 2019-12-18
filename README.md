@@ -72,13 +72,25 @@ Starting with Ubuntu Server 18.04
 
 1. The installer disables root and creates a root user with the credentials you entered.
 
-2  Enable the firewall:
+2. Enable the firewall:
+
 `sudo ufw enable`, `sudo ufw status`
 
 3. Run updates:
+
 `sudo apt update`, `sudo apt-get upgrade -y`, `sudo dist-upgrade -y`
 
 4. Install Docker:
-`curl -ssl https://get.docker.com | bash`
 
-5. Install Docker-Compose
+`curl -fsSL get.docker.com -o get-docker.sh`
+
+`sudo sh get-docker.sh`
+
+`sudo usermod -a -G docker $USER`
+
+`logout`
+
+5. Install Docker-Compose:
+
+Follow instructions at https://docs.docker.com/compose/install/
+
