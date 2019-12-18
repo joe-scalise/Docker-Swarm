@@ -92,5 +92,5 @@ Starting with Ubuntu Server 18.04
 
 5. Install Docker-Compose:
 
-Follow instructions at https://docs.docker.com/compose/install/
+Follow instructions at https://docs.docker.com/compose/install/; just run `sudo su` before first command.
 
