@@ -1,0 +1,87 @@
+version: "3.7"
+
+services:
+  app:
+    image: plexinc/pms-docker:plexpass
+    environment:
+      - TZ=America/New_York
+      - PUID=${PUID?Variable not set}
+      - PGID=${PGID?Variable not set}
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      #- ADVERTISE_IP=http://${SWARM_MANAGER_IP}:32400
+    volumes:
+      - plex-config:/config
+      - plex-transcode:/transcode
+      - /nfs/media/:/data
+    deploy:
+    # Doing this for now to troubleshoot remote connectivity
+      placement:   
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.frontend.rule=Host:plex.${DOMAIN_ROOT}
+        - traefik.enable=true
+        - traefik.port=32400
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+    networks:
+      - traefik-public
+      - internal
+    ports:
+      - 32400:32400
+      - 8324:8324
+      - 32469:32469
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
+      # - target: 32400
+      #   published: 32400
+      #   mode: host
+      # - target: 3005
+      #   published: 3005
+      #   mode: host
+      # - target: 8324
+      #   published: 8324
+      #   mode: host
+      # - target: 32469
+      #   published: 32469
+      #   mode: host
+      # - target: 1900
+      #   published: 1900
+      #   protocol: udp
+      #   mode: host
+      # - target: 32410
+      #   published: 32410
+      #   protocol: udp
+      #   mode: host
+      # - target: 32412
+      #   published: 32412
+      #   protocol: udp
+      #   mode: host
+      # - target: 32413
+      #   published: 32413
+      #   protocol: udp
+      #   mode: host
+      # - target: 32414
+      #   published: 32414
+      #   protocol: udp
+      #   mode: host
+
+volumes:
+  plex-config:
+    driver: local
+  plex-transcode:
+    driver: local
+
+networks:
+  traefik-public:
+    external: true
+  internal:
+    driver: overlay
