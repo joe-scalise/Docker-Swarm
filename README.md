@@ -96,3 +96,12 @@ Starting with Ubuntu Server 18.04
 
 Follow instructions at https://docs.docker.com/compose/install/; just run `sudo su` before first command.
 
+6. Install some auto-completion:
+
+`cd /etc/bash_completion.d/`
+`curl -O https://raw.githubusercontent.com/docker/cli/b75596e1e4d5295ac69b9934d1bd8aff691a0de8/contrib/completion/bash/docker`
+
+7. Setup swarm mode:
+
+`docker swarm init`
+
