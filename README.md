@@ -105,3 +105,7 @@ Follow instructions at https://docs.docker.com/compose/install/; just run `sudo 
 
 `docker swarm init`
 
+8. Fix iptables vs. UFW issue:
+
+`sudo nano /etc/default/docker`, `DOCKER_OPTS="--iptables=false"`, `sudo systemctl restart docker`
+
