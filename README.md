@@ -1,16 +1,18 @@
 # Docker-Swarm
 
-This repository is a backup of my Docker Swarm Mode system for self hosting purposes. All the ideas presented in the files here are an amalgamation of several online resources in my quest to learn Docker and related tooling, over many months time.
+![Docker Logo](https://en.wikipedia.org/wiki/Docker_(software)#/media/File:Docker_(container_engine)_logo.svg)
 
-My setup had many itterations, but generally what finally worked was to focus on minimizing the amount I relied on configuration file based setups.  Ideally, the goal will be to have a system that can be deployed with minimal host setup.  That means a YAML file to define the stack but staying away from environment files, config files and bind-mounted data directories.  None of this was possible until I learned about Consul, Docker Volumes and Docker Secrets.
+This repository is a backup of my Docker in swarm mode system for self hosting purposes. All the ideas presented in the files here are an amalgamation of several online resources in my quest to learn Docker and related tooling.
+
+My setup has had many itterations, total rebuilds included.  What worked best for me eventually was staying away from the file system.  That means a YAML file to define the stack but trying to prevent the use of environment files, config files and bind-mounted data directories.  Primarily utilizing Consul, Docker Volumes and Docker Secrets.
 
 Core Stacks and System Highlights:
 
-- **Traefik** w/ Let's Encrypt, **Consul** and **Keycloak** (no config files)
-- **Portainer** and **Swarmpit** for management (looking at Weave Scope, Ranger too)
+- **Traefik** stack w/ Let's Encrypt, **Whoami**, **Consul**
+- **Portainer** and **Swarmpit** for management
 - **Syncthing** to edit files on my laptop, and serve as first line of defence backups
 - **Elasticsearch**, **Logstash** and **Kibana** (ELK) stack for log management
-- **Whoami** for testing
+- **Dozzle** for simple viewing of container logs
 - **Ouroboros** for automatic image updates
 - Docker swarm mode
 - Docker Volumes instead of bind-mounts
@@ -18,19 +20,19 @@ Core Stacks and System Highlights:
 - Docker Secrets instead of environment files or variables
 - NFS backup scripts via crontab
 
-Personal stuff I run for daily use:
+WIP:
 
-- Bookstack
-- Bitwarden
-- Home Assistant (not in Swarm because of USB devices)
-- FreePBX (FreePBX, Asterisk w/ Twilio)
+- **Keycloak**
+- migrate to **Traefik 2.0**?
+- settle on a monitoring stack w/ **Gotify**, **Ciao**, Mailgun/StatusCake/Uptime Robot/healthchecks.io etc.
+- **Pydio Cells** w/ **MinIO** backend
 
-Besides the above daily-use apps, I'm constantly creating new stacks, and am considering sharing this as a private repo (maybe Patreon?), consider it a currated (hording) collection of self-hosted software.
+Stacks for personal use:
 
-- OpenFaaS 
-- Plex w/tools 
-- Emby
-- Snibox
+- **Bitwarden**
+- **Home Assistant** (not in Swarm because of USB devices)
+- **FreePBX** (FreePBX, Asterisk w/ Twilio)
+- **Plex**
 
 Links to what I used as inspiration (lots of copying):
 
@@ -93,4 +95,17 @@ Starting with Ubuntu Server 18.04
 5. Install Docker-Compose:
 
 Follow instructions at https://docs.docker.com/compose/install/; just run `sudo su` before first command.
+
+6. Install some auto-completion:
+
+`cd /etc/bash_completion.d/`
+`curl -O https://raw.githubusercontent.com/docker/cli/b75596e1e4d5295ac69b9934d1bd8aff691a0de8/contrib/completion/bash/docker`
+
+7. Setup swarm mode:
+
+`docker swarm init`
+
+8. Fix iptables vs. UFW issue:
+
+`sudo nano /etc/default/docker`, `DOCKER_OPTS="--iptables=false"`, `sudo systemctl restart docker`
 
