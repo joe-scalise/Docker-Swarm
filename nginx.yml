@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  app:
+    image: nginx
+    volumes:
+      - ./nginx/static:/usr/share/nginx/html:ro
+    networks:
+      - traefik-public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:site1.${DOMAIN?Error}
+        - traefik.enable=true
+        - traefik.port=80
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+networks:
+  traefik-public:
+    external: true
