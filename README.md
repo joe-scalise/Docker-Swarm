@@ -1,7 +1,5 @@
 # Docker-Swarm
 
-![Docker Logo](https://en.wikipedia.org/wiki/Docker_(software)#/media/File:Docker_(container_engine)_logo.svg)
-
 This repository is a backup of my Docker in swarm mode system for self hosting purposes. All the ideas presented in the files here are an amalgamation of several online resources in my quest to learn Docker and related tooling.
 
 My setup has had many itterations, total rebuilds included.  What worked best for me eventually was staying away from the file system.  That means a YAML file to define the stack but trying to prevent the use of environment files, config files and bind-mounted data directories.  Primarily utilizing Consul, Docker Volumes and Docker Secrets.
