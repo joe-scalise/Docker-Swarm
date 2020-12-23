@@ -8,22 +8,13 @@ Core Stacks and System Highlights:
 
 - **Traefik** stack w/ Let's Encrypt, **Whoami**, **Consul**
 - **Portainer** and **Swarmpit** for management
-- **Syncthing** to edit files on my laptop, and serve as first line of defence backups
-- **Elasticsearch**, **Logstash** and **Kibana** (ELK) stack for log management
 - **Dozzle** for simple viewing of container logs
-- **Ouroboros** for automatic image updates
+- **Watchtower** for automatic image updates
 - Docker swarm mode
 - Docker Volumes instead of bind-mounts
 - Docker Volumes backed up to NFS file share
 - Docker Secrets instead of environment files or variables
 - NFS backup scripts via crontab
-
-WIP:
-
-- **Keycloak**
-- migrate to **Traefik 2.0**?
-- settle on a monitoring stack w/ **Gotify**, **Ciao**, Mailgun/StatusCake/Uptime Robot/healthchecks.io etc.
-- **Pydio Cells** w/ **MinIO** backend
 
 Stacks for personal use:
 
@@ -31,8 +22,9 @@ Stacks for personal use:
 - **Home Assistant** (not in Swarm because of USB devices)
 - **FreePBX** (FreePBX, Asterisk w/ Twilio)
 - **Plex**
+- **Syncthing**
 
-Links to what I used as inspiration (lots of copying):
+Links to what I used as inspiration (aka lots of copying):
 
 - Home Assistant [forum post](https://community.home-assistant.io/t/my-docker-stack/43548)
 - Ultimate Home Media Server [blog post](https://www.smarthomebeginner.com/docker-home-media-server-2018-basic/)
