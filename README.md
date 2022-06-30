@@ -71,9 +71,9 @@ Remove all stacks:
 
 Starting with Ubuntu Server 22.04
 
-`Use the lsb_release -a command to display the Ubuntu version.`
+Use the `lsb_release -a command` to display the Ubuntu version.
 
-1. The installer disables root and creates a root user with the credentials you entered.
+
 
 2. Enable the firewall
 
@@ -103,8 +103,14 @@ Determine latest version by referencing the releases at https://github.com/docke
 ```
 mkdir -p ~/.docker/cli-plugins/
 curl -SL https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-docker-compose --version
+```
+
+```
+sudo chmod +x ~/.docker/cli-plugins/docker-compose
+```
+
+```
+docker-compose version
 ```
 
 6. Install command-line completion
@@ -128,4 +134,22 @@ sudo nano /etc/default/docker
 DOCKER_OPTS="--iptables=false"
 sudo systemctl restart docker
 ```
+
+9. Make data directory & clone this repo
+
+```
+mkdir ~/data; cd ~/data
+```
+
+```
+git clone https://github.com/joe-scalise/Docker-Swarm.git
+```
+
+10. Create Docker network
+
+```
+docker network create --driver=overlay traefik-public
+```
+
+11.
 
