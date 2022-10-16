@@ -93,9 +93,9 @@ sudo apt update; sudo apt-get upgrade -y; sudo apt dist-upgrade
 4. Install Docker
 
 ```
-curl -fsSL get.docker.com -o get-docker.sh`
-sudo sh get-docker.sh`
-sudo usermod -a -G docker $USER`
+curl -fsSL get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -a -G docker $USER
 ```
 
 5. Install Docker-Compose
