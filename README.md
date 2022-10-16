@@ -73,7 +73,9 @@ Starting with Ubuntu Server 22.04
 
 Use the `lsb_release -a command` to display the Ubuntu version.
 
+0. You should have a domain, example.com, with DNS setup for sub-sub domain access from each stack, *.stack.example.com.  Your sites will look like: traefik.stack.example.com if you follow this guide.
 
+1. Install Ubuntu Server and configure SSH
 
 2. Enable the firewall
 
@@ -151,5 +153,10 @@ git clone https://github.com/joe-scalise/Docker-Swarm.git
 docker network create --driver=overlay traefik-public
 ```
 
-11.
+11. Create environment variables:
+
+```
+export EMAIL=admin@example.com
+export DOMAIN=stack.example.com
+
 
